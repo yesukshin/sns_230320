@@ -30,7 +30,7 @@
 
 <script>
 $(document).ready(function() {
-	// 로그인
+	// 로그인(엔터 또는 로그인 버튼 클릭시)
 	$('#loginForm').on('submit', function(e) {
 		e.preventDefault(); // form submit 중단
 		
@@ -47,9 +47,7 @@ $(document).ready(function() {
 		} 
 		
 		let url = $(this).attr('action');
-		console.log(url);
 		let params = $(this).serialize(); // name 속성 반드시 있어야함
-		console.log(params);
 		
 		$.post(url, params)   // request
 		.done(function(data) {  // response

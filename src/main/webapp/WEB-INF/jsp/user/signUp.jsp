@@ -138,11 +138,12 @@
 	        
 	        //2)Ajax호출 컨트롤러가 json을 리턴해줌
 	        let url = $(this).attr('action');
-	        console.log(url);
+	        //console.log(url);
 	        let params = $(this).serialize(); //form태그의 name속성과 값들로 파라미터 구성
-	        console.log(params);
-	        $.post(url,params) // request정의
-	        .done(function(data) {
+	        //console.log(params);
+	        $.post(url,params).done(function(data)  // request정의
+	        {   
+	        	console.log(data)
 	        	//response
 	        	if(data.code == 1) {
 	        		//로그인 화면으로 이동

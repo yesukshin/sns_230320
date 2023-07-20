@@ -30,4 +30,15 @@ public class PostBO {
 		
 		return postRepository.findAll();
 	}
+	
+    public int addPost(int userId, String subject, String content, String file) {
+		
+		// 이미지가 있으면 업로드 후 imagepath받아옴
+		String imagePath = null;
+		
+		return postMapper.insertPost(userId,subject,content,file);
+		//SNS-회원가입/로그인, 타임라인 postList
+		//MEMO-글쓰기 ㅣ완료
+		
+	}
 }
