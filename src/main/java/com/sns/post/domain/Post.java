@@ -1,7 +1,6 @@
 package com.sns.post.domain;
 
 import java.time.ZonedDateTime;
-import java.util.Date;
 
 import lombok.Data;
 

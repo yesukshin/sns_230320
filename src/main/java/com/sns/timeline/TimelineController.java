@@ -22,8 +22,8 @@ public class TimelineController {
 	public String timelineView(Model model) {
 	
 		List<PostEntity> postList = postBO.getPostList();
-		
-		model.addAttribute("result", postList);
+		// commentList =>model에 추가하여 댓글목록 뿌림
+		model.addAttribute("postList", postList);
 		model.addAttribute("view", "timeline/timeline");
 		return "template/layout";
 	}

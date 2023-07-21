@@ -1,8 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%--글쓰기저장, 파일업로드 --%>
-<%--SNS jpa - user, post  --%>
+
 <div class="d-flex justify-content-center">
 	<div class="contents-box">
 		<%-- 글쓰기 영역 --%>
@@ -24,18 +23,18 @@
 				<button id="writeBtn" class="btn btn-info">게시</button>
 			</div>
 		</div>
+		
 		<%--// 글쓰기 영역 끝 --%>
 		
 		<%-- 타임라인 영역 --%>
 		<div class="timeline-box my-5">
-		
+		    
 			<c:forEach items="${postList}" var="post">
 			<%-- 카드1 --%>
 			<div class="card border rounded mt-3">
 				<%-- 글쓴이, 더보기(삭제) --%>
 				<div class="p-2 d-flex justify-content-between">
-					<span class="font-weight-bold">글쓴이${post.userId}</span>
-					
+				    <span class="font-weight-bold">글쓴이${post.userId}</span> 
 					<%-- 더보기 ... --%>
 					<a href="#" class="more-btn">
 						<img src="https://www.iconninja.com/files/860/824/939/more-icon.png" width="30">
@@ -82,7 +81,8 @@
 					<%-- 댓글 쓰기 --%>
 					<div class="comment-write d-flex border-top mt-2">
 						<input type="text" class="form-control border-0 mr-2 comment-input" placeholder="댓글 달기"/> 
-						<button type="button" class="comment-btn btn btn-light">게시</button>
+						<button id="commentBtn" type="button" class="comment-btn btn btn-light" data-user-id="${post.userId}" data-post-id="${post.id}">게시</button>
+						<%-- <button type="button" class="confirm-btn btn bg-danger text-white" data-booking-id="${list.id}">확정</button> --%>
 					</div>
 				</div> <%--// 댓글 목록 끝 --%>
 			</div> <%--// 카드1 끝 --%>
@@ -117,6 +117,96 @@ $(document).ready(function() {
 		
 		// 유효성 통과한 이미지는 상자에 업로드 된 파일 이름 노출
 		$('#fileName').text(fileName);
+	});
+	
+	// 글쓰기
+	$('#writeBtn').on('click', function() {
+		let content = $('#writeTextArea').val();
+		console.log(content);
+		if (content.length < 1) {
+			alert("글 내용을 입력해주세요");
+			return;
+		}
+		
+		let file = $('#file').val();
+		if (file == '') {
+			alert('파일을 업로드 해주세요');
+			return;
+		}
+		
+		// 파일이 업로드 된 경우 확장자 체크
+		let ext = file.split('.').pop().toLowerCase(); // 파일 경로를 .으로 나누고 확장자가 있는 마지막 문자열을 가져온 후 모두 소문자로 변경
+		if ($.inArray(ext, ['gif', 'png', 'jpg', 'jpeg']) == -1) {
+			alert("gif, png, jpg, jpeg 파일만 업로드 할 수 있습니다.");
+			$('#file').val(''); // 파일을 비운다.
+			return;
+		}
+		
+		// 폼태그를 자바스크립트에서 만든다.
+		let formData = new FormData();
+		formData.append("content", content);
+		formData.append("file", $('#file')[0].files[0]); // $('#file')[0]은 첫번째 input file 태그를 의미, files[0]는 업로드된 첫번째 파일
+		
+		// AJAX form 데이터 전송
+		$.ajax({
+			type: "post"
+			, url: "/post/create"
+			, data: formData
+			, enctype: "multipart/form-data"    // 파일 업로드를 위한 필수 설정
+			, processData: false    // 파일 업로드를 위한 필수 설정
+			, contentType: false    // 파일 업로드를 위한 필수 설정
+			, success: function(data) {
+				if (data.code == 1) {
+					location.reload();
+				} else if (data.code == 500) { // 비로그인 일 때
+					location.href = "/user/sign_in_view";
+				} else {
+					alert(data.errorMessage);
+				}
+			}
+			, error: function(e) {
+				alert("글 저장에 실패했습니다. 관리자에게 문의해주세요.");
+			}
+		});  // --- ajax 끝
+	});
+	
+	/*memo
+	-글상세 뿌리기
+	sns
+	- 댓글쓰기 api먼저-get주소로 직접 디비포ㅠ학인
+	- 댓글쓰기 javascript
+	- 댓글 ajax postid, 댓글내용
+	- comment는 mybatis
+	- 댓글목록 뿌리기 */
+	
+	// 댓글쓰기
+	$('.comment-btn').on('click', function() {
+		
+		var thisRow = $(this).closest('input');
+		  
+		let postId = $(this).data('post-id');		
+		//let userId = $(this).data('user-id');		
+		let comment = thisRow.val(); 
+		alert("1");
+		alert(postId);
+		alert(comment);
+		// AJAX form 데이터 전송
+		$.ajax({
+			type: "post"
+			, url: "/comment/create"		
+			, data : {"postId":postId,
+				      "comment":comment}//json으로 구성		
+			, success: function(data) {
+				if (data.code == 1) {
+					location.reload();
+				} else {
+					alert(data.errorMessage);
+				}
+			}
+			, error: function(e) {
+				alert("댓글 저장에 실패했습니다. 관리자에게 문의해주세요.");
+			}
+		});  // --- ajax 끝
 	});
 });
 </script>

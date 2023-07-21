@@ -31,7 +31,7 @@ public class PostEntity {
 	private int id;
 	
 	@Column(name = "userId")
-	private String userId;
+	private int  userId;
 	
 	private String subject;
 	
