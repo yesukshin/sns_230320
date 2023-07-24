@@ -1,5 +1,7 @@
 package com.sns.comment;
 
+
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -11,20 +13,22 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.sns.comment.bo.CommentBO;
+import com.sns.comment.entity.CommentEntity;
 
 @RestController
 @RequestMapping("/comment")
-public class commentRestController {
+public class CommentRestController {
 	@Autowired
 	private CommentBO commentBO;
 	
 	@RequestMapping("/create")
 	public Map<String, Object> addComment(
 			@RequestParam("postId") int postId,
-			@RequestParam("content") String content,
+			@RequestParam("comment") String content,
 			HttpSession session) {
 		
-		commentBO.addComment(postId, 12, content);
+		int userId = (int) session.getAttribute("userId");
+		commentBO.addComment(postId, userId, content);
 		
 		Map<String, Object> result = new HashMap<>();
 					
@@ -33,5 +37,5 @@ public class commentRestController {
 		
 		return result;
 	}
-
+	
 }

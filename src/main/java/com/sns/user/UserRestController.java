@@ -32,7 +32,7 @@ public class UserRestController {
 	public Map<String, Object> isDuplicatedId(@RequestParam("loginId") String loginId) {
 
 		Map<String, Object> result = new HashMap<>();
-		UserEntity userEntity  =  userBO.getUserEntityByLogibnId(loginId);
+		UserEntity userEntity  =  userBO.getUserEntityByLoginId(loginId);
 		
 		result.put("code", 1);
 		result.put("isDuplicatedId", false);		

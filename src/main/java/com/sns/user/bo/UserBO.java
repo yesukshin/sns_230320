@@ -12,7 +12,7 @@ public class UserBO {
 	private UserRepository userRepository;
 	// input: loginId
 	// output: UserEntity(null or채워저 있거나) 
-    public UserEntity getUserEntityByLogibnId(String loginId) {
+    public UserEntity getUserEntityByLoginId(String loginId) {
     	
     	return userRepository.findByLoginId(loginId);
     }
@@ -38,4 +38,10 @@ public class UserBO {
     	
     	return userRepository.findByLoginIdAndPassword(loginId,pasword);
     }
+ 	
+    public UserEntity getUserEntityById(int id) {
+    	
+    	return userRepository.findById(id).orElse(null);
+    }
+ 	
 }

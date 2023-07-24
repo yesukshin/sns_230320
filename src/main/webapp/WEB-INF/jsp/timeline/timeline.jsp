@@ -29,12 +29,12 @@
 		<%-- 타임라인 영역 --%>
 		<div class="timeline-box my-5">
 		    
-			<c:forEach items="${postList}" var="post">
+			<c:forEach items="${cardViewList}" var="cardview">
 			<%-- 카드1 --%>
 			<div class="card border rounded mt-3">
 				<%-- 글쓴이, 더보기(삭제) --%>
 				<div class="p-2 d-flex justify-content-between">
-				    <span class="font-weight-bold">글쓴이${post.userId}</span> 
+				    <span class="font-weight-bold">글쓴이 ${cardview.user.loginId}</span> 
 					<%-- 더보기 ... --%>
 					<a href="#" class="more-btn">
 						<img src="https://www.iconninja.com/files/860/824/939/more-icon.png" width="30">
@@ -43,7 +43,7 @@
 				
 				<%-- 카드 이미지 --%>
 				<div class="card-img">
-					<img src="${post.imagePath}" class="w-100" alt="본문 이미지">
+					<img src="${cardview.post.imagePath}" class="w-100" alt="본문 이미지">
 				</div>
 				
 				<%-- 좋아요 --%>
@@ -56,8 +56,8 @@
 				
 				<%-- 글 --%>
 				<div class="card-post m-3">
-					<span class="font-weight-bold">글쓴이${post.userId}</span>
-					<span>${post.content}</span>
+					<span class="font-weight-bold">글쓴이${cardview.user.name}</span>
+					<span>${cardview.post.content}</span>
 				</div>
 				
 				<%-- 댓글 제목 --%>
@@ -68,28 +68,29 @@
 				<%-- 댓글 목록 --%>
 				<div class="card-comment-list m-2">
 					<%-- 댓글 내용들 --%>
-					<div class="card-comment m-1">
-						<span class="font-weight-bold">댓글쓴이</span>
-						<span>댓글 내용</span>
-						
-						<%-- 댓글 삭제 버튼 --%>
-						<a href="#" class="comment-del-btn">
-							<img src="https://www.iconninja.com/files/603/22/506/x-icon.png" width="10px" height="10px">
-						</a>
-					</div>
+					<c:forEach items="${commentList}" var="comment">				
+						<div class="card-comment m-1">
+					        <c:if test = "${comment.postId eq post.id}">
+								<span class="font-weight-bold">${comment.name}</span>
+								<span>${comment.content}</span>								
+								<%-- 댓글 삭제 버튼 --%>
+								<a href="#" class="comment-del-btn">
+									<img src="https://www.iconninja.com/files/603/22/506/x-icon.png" width="10px" height="10px">
+								</a>
+							</c:if>	
+						</div>
+					</c:forEach>
 					
 					<%-- 댓글 쓰기 --%>
 					<div class="comment-write d-flex border-top mt-2">
 						<input type="text" class="form-control border-0 mr-2 comment-input" placeholder="댓글 달기"/> 
-						<button id="commentBtn" type="button" class="comment-btn btn btn-light" data-user-id="${post.userId}" data-post-id="${post.id}">게시</button>
-						<%-- <button type="button" class="confirm-btn btn bg-danger text-white" data-booking-id="${list.id}">확정</button> --%>
+						<button id="commentBtn" type="button" class="comment-btn btn btn-light" data-post-id="${cardview.post.id}">게시</button>
 					</div>
 				</div> <%--// 댓글 목록 끝 --%>
 			</div> <%--// 카드1 끝 --%>
-			</c:forEach>
-			
-		</div> <%--// 타임라인 영역 끝  --%>
-	</div> <%--// contents-box 끝  --%>
+	     </c:forEach>
+	</div> <%--// 타임라인 영역 끝  --%>
+  </div> <%--// contents-box 끝  --%>
 </div>
 
 <script>
@@ -179,20 +180,27 @@ $(document).ready(function() {
 	- comment는 mybatis
 	- 댓글목록 뿌리기 */
 	
-	// 댓글쓰기
+	// 클래스로 잡아서 해야한다 댓글쓰기
 	$('.comment-btn').on('click', function() {
 		
-		var thisRow = $(this).closest('input');
-		  
-		let postId = $(this).data('post-id');		
-		//let userId = $(this).data('user-id');		
-		let comment = thisRow.val(); 
-		alert("1");
+		//console.log("target::", $(event.target))
+		let postId = $(this).data('post-id');	// 클릭한 row의 Id
+	    var row = $(this).closest('div');
+		//console.log("row::", row)
+		var comment = row.find("input[type='text']").val();
+		console.log("comment::", comment)
+	     
+		/*
+		  <댓글내용가져오기>
+		  1.형제태그중에서 input태그를 가져온다
+		    let comment = $(this).siblings("input").val().trim();
+		  2.클릭한 바로전에 있는 태그
+		  let comment = $(this).prev().val().trim();
+		*/
 		alert(postId);
-		alert(comment);
-		// AJAX form 데이터 전송
+		//AJAX form 데이터 전송
 		$.ajax({
-			type: "post"
+			type: "get"
 			, url: "/comment/create"		
 			, data : {"postId":postId,
 				      "comment":comment}//json으로 구성		
@@ -206,7 +214,7 @@ $(document).ready(function() {
 			, error: function(e) {
 				alert("댓글 저장에 실패했습니다. 관리자에게 문의해주세요.");
 			}
-		});  // --- ajax 끝
+		}); // --- ajax 끝
 	});
 });
 </script>

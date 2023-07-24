@@ -11,4 +11,28 @@
 								`updatedAt`)
 	    VALUES (#{postId},#{userId},#{content},NOW(), NOW()) 
 	 </insert>
+	 
+	 <select id="selectCommentList" resultType="com.sns.comment.domain.Comment">
+		SELECT Comment.id,
+		        Comment.postId,
+				Comment.userId,
+                User.Name,
+				Comment.content,
+				Comment.createdAt,
+				Comment.updatedAt 
+		   FROM
+			Comment inner join User
+		    on Comment.userId = User.Id				
+	</select>
+	
+	<select id = "selectCommentListByPostId" parameterType = "int" 
+	        resultType="com.sns.comment.domain.Comment">
+	      SELECT `postId`,
+				`userId`,
+				`content`,
+				`createdAt`,
+				`updatedAt`
+		   FROM	`Comment`
+		   WHERE `postId` = ${postId}
+	</select>
  </mapper>

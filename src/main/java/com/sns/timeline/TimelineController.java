@@ -8,22 +8,26 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.sns.comment.bo.CommentBO;
+import com.sns.comment.domain.Comment;
 import com.sns.post.Entity.PostEntity;
 import com.sns.post.bo.PostBO;
+import com.sns.timeline.bo.TimelineBO;
+import com.sns.timeline.domain.CardView;
 
 @RequestMapping("/timeline")
 @Controller
 public class TimelineController {
 
 	@Autowired
-	private PostBO postBO;
+	private TimelineBO timelineBO;
 	
 	@GetMapping("/timeline_view")
 	public String timelineView(Model model) {
-	
-		List<PostEntity> postList = postBO.getPostList();
-		// commentList =>model에 추가하여 댓글목록 뿌림
-		model.addAttribute("postList", postList);
+	    
+		List<CardView> cardViewList = timelineBO.generateCardViewList(); 
+		
+		model.addAttribute("cardViewList", cardViewList);
 		model.addAttribute("view", "timeline/timeline");
 		return "template/layout";
 	}
