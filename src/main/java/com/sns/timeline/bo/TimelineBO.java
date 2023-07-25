@@ -40,7 +40,7 @@ public class TimelineBO {
 	
 	//input
 	//output : List<CardView>
-    public List<CardView> generateCardViewList(HttpSession session){
+    public List<CardView> generateCardViewList(){
     	
     	List<CardView> cardViewList = new ArrayList<>();
     	// 글목록 가져온다
@@ -81,6 +81,7 @@ public class TimelineBO {
 			// 좋아요 갯수
     	    int likeCount = likeBO.countByPostId(postData.getId());
     	    cardView.setLikeCount(likeCount);
+    	    
     	    
     		// 좋아요 눌렀는지 확인
     	    Integer userId= (Integer)session.getAttribute("userId");
