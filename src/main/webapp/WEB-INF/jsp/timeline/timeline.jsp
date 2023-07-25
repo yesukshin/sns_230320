@@ -25,10 +25,8 @@
 		</div>
 		
 		<%--// 글쓰기 영역 끝 --%>
-		
 		<%-- 타임라인 영역 --%>
 		<div class="timeline-box my-5">
-		    
 			<c:forEach items="${cardViewList}" var="cardview">
 			<%-- 카드1 --%>
 			<div class="card border rounded mt-3">
@@ -36,6 +34,7 @@
 				<div class="p-2 d-flex justify-content-between">
 				    <span class="font-weight-bold">글쓴이 ${cardview.user.loginId}</span> 
 					<%-- 더보기 ... --%>
+					
 					<a href="#" class="more-btn">
 						<img src="https://www.iconninja.com/files/860/824/939/more-icon.png" width="30">
 					</a>
@@ -48,10 +47,18 @@
 				
 				<%-- 좋아요 --%>
 				<div class="card-like m-3">
-					<a href="#" class="like-btn">
-						<img src="https://www.iconninja.com/files/214/518/441/heart-icon.png" width="18" height="18" alt="filled heart">
-					</a>
-					좋아요 100개
+					<%-- 하트를 누를때 좋아요가 눌러지고 좋아요 테이블에 등록, 취소하면 테이블에서 삭제 --%>
+					<c:if test = "${cardview.filledLike eq true}">
+						<a href="#" class="like-btn" data-post-id="${cardview.post.id}">
+							<img src="https://www.iconninja.com/files/527/809/128/heart-icon.png" width="18" height="18" alt="filled heart">
+						</a>
+					</c:if>
+					<c:if test = "${cardview.filledLike eq false}">
+						<a href="#" class="like-btn" data-post-id="${cardview.post.id}">
+							<img src="https://www.iconninja.com/files/214/518/441/heart-icon.png" width="18" height="18" alt="unfilled heart">
+						</a>
+					</c:if>
+						좋아요 ${cardview.likeCount}
 				</div>
 				
 				<%-- 글 --%>
@@ -68,15 +75,17 @@
 				<%-- 댓글 목록 --%>
 				<div class="card-comment-list m-2">
 					<%-- 댓글 내용들 --%>
-					<c:forEach items="${commentList}" var="comment">				
+					<c:forEach items="${cardview.commentList}" var="list">				
 						<div class="card-comment m-1">
-					        <c:if test = "${comment.postId eq post.id}">
-								<span class="font-weight-bold">${comment.name}</span>
-								<span>${comment.content}</span>								
+					        <c:if test = "${list.comment.postId eq cardview.post.id}">
+								<span class="font-weight-bold">${list.user.loginId}</span>
+								<span>${list.comment.content}</span>								
 								<%-- 댓글 삭제 버튼 --%>
-								<a href="#" class="comment-del-btn">
-									<img src="https://www.iconninja.com/files/603/22/506/x-icon.png" width="10px" height="10px">
-								</a>
+								<c:if test = "${userId eq list.comment.userId}"> 
+									<a href="#" class="comment-del-btn" data-user-id="${list.comment.userId}" data-comment-id="${list.comment.id}">
+										<img src="https://www.iconninja.com/files/603/22/506/x-icon.png" width="10px" height="10px">
+									</a>
+								</c:if>
 							</c:if>	
 						</div>
 					</c:forEach>
@@ -213,6 +222,58 @@ $(document).ready(function() {
 			}
 			, error: function(e) {
 				alert("댓글 저장에 실패했습니다. 관리자에게 문의해주세요.");
+			}
+		}); // --- ajax 끝
+	});
+	
+	// 댓글삭제
+	$('.comment-del-btn').on('click', function(e) {
+	    e.preventDefault();// 버튼 클릭시 화면 올라가는 거 방지
+	    let userId = $(this).data('user-id');	    // 댓글쓴 아이디
+		let commentId = $(this).data('comment-id'); // 삭제할 댓글id
+		// 댓글쓴 유저아이디 넘김-서버에서 session의 id와 일치하면 삭제 아니면 삭제 불가
+		// AJAX form 데이터 전송
+		// 삭제시 삭제조건은 댓글id
+		$.ajax({
+			type: "delete"
+			, url: "/comment/delete"		
+			, data : {"userId":userId,
+				      "commentId":commentId}//json으로 구성		
+			, success: function(data) {
+				if (data.code == 1) {
+					location.reload(true);
+				} else {
+					alert(data.errorMessage);
+				}
+			}
+			, error: function(reuqest, status, error) {
+				alert("댓글 삭제에 실패했습니다. 관리자에게 문의해주세요.");
+			}
+		}); // --- ajax 끝
+	});
+	
+	// 하트클릭이벤트
+	//class="like-btn"
+	$('.like-btn').on('click', function(e) {
+		
+	    e.preventDefault();// 버튼 클릭시 화면 올라가는 거 방지	   
+		let postId = $(this).data('post-id');
+		
+		$.ajax({
+			 type: "Get"
+		    , url: "/like/" + postId		
+			//, data : {"postId":postId}//json으로 구성		
+			, success: function(data) {
+				if (data.code == 1) {
+					location.reload(true);
+				} else if (data.code == 300){
+					//alert(data.errorMessage);
+					//로그인 페이지로 이동
+					location.href("/user/sign_in_view");
+				}
+			}
+			, error: function(reuqest, status, error) {
+				alert("좋아요 처리시 실패했습니다.");
 			}
 		}); // --- ajax 끝
 	});

@@ -27,7 +27,8 @@
 	
 	<select id = "selectCommentListByPostId" parameterType = "int" 
 	        resultType="com.sns.comment.domain.Comment">
-	      SELECT `postId`,
+	      SELECT `id`,
+	             `postId`,
 				`userId`,
 				`content`,
 				`createdAt`,
@@ -35,4 +36,10 @@
 		   FROM	`Comment`
 		   WHERE `postId` = ${postId}
 	</select>
+	
+	<delete id = "deleteCommentByCommentId" parameterType = "int" >
+	
+			DELETE FROM `COMMENT` WHERE id = #{commentId};
+	    
+	</delete>
  </mapper>

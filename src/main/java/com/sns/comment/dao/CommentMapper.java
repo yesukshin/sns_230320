@@ -19,4 +19,7 @@ public interface CommentMapper {
 	
 	// 게시글에 해당하는 댓글조회
 	public List<Comment> selectCommentListByPostId(@Param("postId") int postId);
+	
+	// 댓글삭제
+	public void deleteCommentByCommentId(@Param("commentId")  int commentId);
 }

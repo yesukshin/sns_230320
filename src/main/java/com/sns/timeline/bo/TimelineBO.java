@@ -4,11 +4,15 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.servlet.http.HttpSession;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.sns.comment.bo.CommentBO;
 import com.sns.comment.domain.CommentView;
+import com.sns.like.bo.LikeBO;
+import com.sns.like.domain.LIKE;
 import com.sns.post.Entity.PostEntity;
 import com.sns.post.bo.PostBO;
 import com.sns.timeline.domain.CardView;
@@ -29,9 +33,14 @@ public class TimelineBO {
 	
 	@Autowired
 	private CommentBO commentBO;
+	
+	@Autowired
+	private LikeBO likeBO;
+	
+	
 	//input
 	//output : List<CardView>
-    public List<CardView> generateCardViewList(){
+    public List<CardView> generateCardViewList(HttpSession session){
     	
     	List<CardView> cardViewList = new ArrayList<>();
     	// 글목록 가져온다
@@ -68,8 +77,29 @@ public class TimelineBO {
     	    List<CommentView> commentViewList = commentBO.generateCommentViewList(postData.getId());
     	    cardView.setCommentList(commentViewList);
     		
-    		// cardViewList에 담는다
+    	   
+			// 좋아요 갯수
+    	    int likeCount = likeBO.countByPostId(postData.getId());
+    	    cardView.setLikeCount(likeCount);
+    	    
+    		// 좋아요 눌렀는지 확인
+    	    Integer userId= (Integer)session.getAttribute("userId");
+    	    LIKE likeData = likeBO.countByPostIdAndUserId(postData.getId(), userId);
+    	    
+    	    boolean filledLike ;
+    	    if (likeData==null) {
+    	    	filledLike = false;
+    	    }else {
+    	    	filledLike = true;
+    	    }
+    	    	
+    	    cardView.setFilledLike(filledLike);
+    	    
+    	    //-----------------------//
+    	    // cardViewList에 담는다   //
+    	    //-----------------------//
     	    cardViewList.add(cardView);
+    	    
     	    
     	} 
     	

@@ -59,5 +59,11 @@ public class CommentBO {
 		
 		return commentViewList;
 	};
+	
+	// 댓글삭제
+	public void delComment(int commentId) {
+			
+		commentMapper.deleteCommentByCommentId(commentId);
+	}
 
 }

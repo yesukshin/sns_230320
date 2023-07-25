@@ -2,16 +2,14 @@ package com.sns.timeline;
 
 import java.util.List;
 
+import javax.servlet.http.HttpSession;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.sns.comment.bo.CommentBO;
-import com.sns.comment.domain.Comment;
-import com.sns.post.Entity.PostEntity;
-import com.sns.post.bo.PostBO;
 import com.sns.timeline.bo.TimelineBO;
 import com.sns.timeline.domain.CardView;
 
@@ -23,9 +21,9 @@ public class TimelineController {
 	private TimelineBO timelineBO;
 	
 	@GetMapping("/timeline_view")
-	public String timelineView(Model model) {
+	public String timelineView(Model model, HttpSession session) {
 	    
-		List<CardView> cardViewList = timelineBO.generateCardViewList(); 
+		List<CardView> cardViewList = timelineBO.generateCardViewList(session); 
 		
 		model.addAttribute("cardViewList", cardViewList);
 		model.addAttribute("view", "timeline/timeline");

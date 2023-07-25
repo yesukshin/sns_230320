@@ -20,5 +20,8 @@ public class CardView {
   // 3.댓글들
 	private List<CommentView> commentList;
   // 4.좋아요들
-  // 5.좋아요눌렀는지 여부-하트처리	
+	private int likeCount;
+	
+  // 5.좋아요눌렀는지 여부-하트처리
+	private boolean filledLike;
 }
