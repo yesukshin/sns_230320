@@ -48,17 +48,19 @@
 				<%-- 좋아요 --%>
 				<div class="card-like m-3">
 					<%-- 하트를 누를때 좋아요가 눌러지고 좋아요 테이블에 등록, 취소하면 테이블에서 삭제 --%>
+					<%-- 좋아요가 눌러져 있을때 => 채워진 하트 --%>
 					<c:if test = "${cardview.filledLike eq true}">
 						<a href="#" class="like-btn" data-post-id="${cardview.post.id}">
 							<img src="https://www.iconninja.com/files/527/809/128/heart-icon.png" width="18" height="18" alt="filled heart">
 						</a>
 					</c:if>
+					<%-- 좋아요가 눌러져 있지 않을때 or 비로그인 => 빈하트 --%>
 					<c:if test = "${cardview.filledLike eq false}">
 						<a href="#" class="like-btn" data-post-id="${cardview.post.id}">
 							<img src="https://www.iconninja.com/files/214/518/441/heart-icon.png" width="18" height="18" alt="unfilled heart">
 						</a>
 					</c:if>
-						좋아요 ${cardview.likeCount}
+						좋아요 ${cardview.likeCount}개
 				</div>
 				
 				<%-- 글 --%>
@@ -206,7 +208,7 @@ $(document).ready(function() {
 		  2.클릭한 바로전에 있는 태그
 		  let comment = $(this).prev().val().trim();
 		*/
-		alert(postId);
+		
 		//AJAX form 데이터 전송
 		$.ajax({
 			type: "get"
@@ -253,7 +255,7 @@ $(document).ready(function() {
 	});
 	
 	// 하트클릭이벤트
-	//class="like-btn"
+	// class="like-btn"
 	$('.like-btn').on('click', function(e) {
 		
 	    e.preventDefault();// 버튼 클릭시 화면 올라가는 거 방지	   
@@ -262,7 +264,6 @@ $(document).ready(function() {
 		$.ajax({
 			 type: "Get"
 		    , url: "/like/" + postId		
-			//, data : {"postId":postId}//json으로 구성		
 			, success: function(data) {
 				if (data.code == 1) {
 					location.reload(true);

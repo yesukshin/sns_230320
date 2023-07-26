@@ -34,5 +34,15 @@
 	<select id = "selectCountByPostId" parameterType="int" resultType= "int">
 	   select count(1) from `like` where postId = #{postId}
 	</select>
+	
+	<!-- 쿼리 하나로 합치기 -->
+	<select id = "selectLikeCountByPostIdOrUserId" parameterType="map" resultType= "int">
+		SELECT  COUNT(*)
+		  FROM `LIKE`
+		 WHERE  postId = #{postId}
+		 <if test="userId != null">
+		   AND	userId = #{userId}
+		 </if>  		
+	</select>
 
 </mapper>

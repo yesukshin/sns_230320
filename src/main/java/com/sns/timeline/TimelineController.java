@@ -23,7 +23,8 @@ public class TimelineController {
 	@GetMapping("/timeline_view")
 	public String timelineView(Model model, HttpSession session) {
 	    
-		List<CardView> cardViewList = timelineBO.generateCardViewList(); 
+		Integer userId = (Integer)session.getAttribute("userId");
+		List<CardView> cardViewList = timelineBO.generateCardViewList(userId); 
 		
 		model.addAttribute("cardViewList", cardViewList);
 		model.addAttribute("view", "timeline/timeline");

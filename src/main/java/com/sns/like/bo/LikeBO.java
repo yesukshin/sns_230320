@@ -28,14 +28,27 @@ public class LikeBO {
 		}
 	}
 	
+	// input : postId
+    // output: 좋아요갯수
 	public int countByPostId(int postId) {
 		
-		return likeMapper.selectCountByPostId(postId);
+		return likeMapper.selectLikeCountByPostIdOrUserId(postId, null);
 		
 	}
 	
-	public LIKE countByPostIdAndUserId(int postId, int userId) {
+	public boolean getLikeByPostIdAndUserId(int postId, Integer userId) {
 		
-		return likeMapper.selectByPostIdAndUserId(postId,userId);
+		if (userId == null) {
+			return false;
+		}
+		return false;
+//		return likeMapper.selectLikeCountByPostIdOrUserId(postId,userId);
+//		if (data==null) {
+//			return false;
+//			
+//		}else {
+//			return true;
+//		}
+			
 	}
 }
