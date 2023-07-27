@@ -42,4 +42,10 @@
 			DELETE FROM `COMMENT` WHERE id = #{commentId};
 	    
 	</delete>
+	
+	<delete id  = "deleteCommentByPostId" parameterType = "int" >
+	
+			DELETE FROM `COMMENT` WHERE postId = #{postId};
+	
+	</delete>
  </mapper>

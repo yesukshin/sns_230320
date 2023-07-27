@@ -22,4 +22,6 @@ public interface CommentMapper {
 	
 	// 댓글삭제
 	public void deleteCommentByCommentId(@Param("commentId")  int commentId);
+	
+	public void deleteCommentByPostId(@Param("postId")  int postId);
 }

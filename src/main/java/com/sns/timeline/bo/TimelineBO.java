@@ -92,10 +92,20 @@ public class TimelineBO {
     	    // 최종적으로 cardViewList에 담는다   //
     	    //------------------------------//
     	    cardViewList.add(cardView);
-    	    
-    	    
+    	     
     	} 
     	
     	return cardViewList;
+    }
+    
+    public void generateCardViewDelete(int postId, int userId){
+    	
+    	// post 삭제
+    	postBO.deletePostByPostIdAndUserId(postId,userId);
+    	// comment 삭제
+    	commentBO.deleteCommentByPostId(postId);
+    	// like 삭제
+    	likeBO.deleteLikeByPostId(postId);
+    	
     }
 }

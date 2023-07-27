@@ -21,4 +21,8 @@ public interface PostMapper {
 			@Param("content") String content,
 			@Param("file") String file);
 
+	public void deletePostByPostIdAndUserId(
+			@Param("postId") int postId, 
+			@Param("userId") int userId);
+
 }

@@ -50,4 +50,9 @@ public class PostBO {
 				.imagePath(imagePath)
 				.build());
 	}
+
+	public void deletePostByPostIdAndUserId(int postId, int userId) {
+		
+		postMapper.deletePostByPostIdAndUserId(postId,userId);
+	}
 }

@@ -27,8 +27,10 @@
 	<delete id="deleteLike" parameterType="map" >
 		DELETE FROM `LIKE`
 		 WHERE postId = #{postId}
-		   AND userId = #{userId}
-
+		 <if test="userId != null">
+		   AND	userId = #{userId}
+		 </if>  		
+		
 	</delete>
 	
 	<select id = "selectCountByPostId" parameterType="int" resultType= "int">

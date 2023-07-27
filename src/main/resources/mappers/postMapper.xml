@@ -7,4 +7,9 @@
    select * 
      from `post`
  </select>
+ <delete id = "deletePostByPostIdAndUserId" parameterType = "map">
+ 
+    delete from `post` where id = #{postId} and userId = #{userId};
+    
+ </delete>
  </mapper>

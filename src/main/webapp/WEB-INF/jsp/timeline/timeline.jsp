@@ -33,11 +33,13 @@
 				<%-- 글쓴이, 더보기(삭제) --%>
 				<div class="p-2 d-flex justify-content-between">
 				    <span class="font-weight-bold">글쓴이 ${cardview.user.loginId}</span> 
-					<%-- 더보기 ... --%>
 					
-					<a href="#" class="more-btn">
-						<img src="https://www.iconninja.com/files/860/824/939/more-icon.png" width="30">
-					</a>
+					<%-- 더보기 ... 내가쓴 글일때만 노출--%> 
+					<c:if test = "${userId eq cardview.post.userId}">
+						<a href="#" class="more-btn" data-toggle="modal" data-target="#Modal" data-post-id="${cardview.post.id}">
+							<img src="https://www.iconninja.com/files/860/824/939/more-icon.png" width="30">
+						</a>
+					</c:if>
 				</div>
 				
 				<%-- 카드 이미지 --%>
@@ -102,6 +104,21 @@
 	     </c:forEach>
 	</div> <%--// 타임라인 영역 끝  --%>
   </div> <%--// contents-box 끝  --%>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="Modal">
+<!--modal-sm : 작은모달, modal-dialog-centered : 모달창을 수직기준 가운데 위치 -->
+  <div class="modal-dialog modal-sm modal-dialog-centered">
+    <div class="modal-content text-center">
+    	<div class="py-3 border-bottom">   
+    		<a href="#" id="deletePostBtn">삭제하기</a>
+    	</div>  
+    	<div class="py-3">   
+    		<a href="#" data-dismiss="modal">취소하기</a>
+    	</div>  
+    </div>
+  </div>
 </div>
 
 <script>
@@ -194,13 +211,6 @@ $(document).ready(function() {
 	// 클래스로 잡아서 해야한다 댓글쓰기
 	$('.comment-btn').on('click', function() {
 		
-		//console.log("target::", $(event.target))
-		let postId = $(this).data('post-id');	// 클릭한 row의 Id
-	    var row = $(this).closest('div');
-		//console.log("row::", row)
-		var comment = row.find("input[type='text']").val();
-		console.log("comment::", comment)
-	     
 		/*
 		  <댓글내용가져오기>
 		  1.형제태그중에서 input태그를 가져온다
@@ -208,6 +218,10 @@ $(document).ready(function() {
 		  2.클릭한 바로전에 있는 태그
 		  let comment = $(this).prev().val().trim();
 		*/
+		
+		let postId = $(this).data('post-id');	// 클릭한 row의 Id
+	    var row = $(this).closest('div');
+		var comment = row.find("input[type='text']").val();
 		
 		//AJAX form 데이터 전송
 		$.ajax({
@@ -277,6 +291,38 @@ $(document).ready(function() {
 				alert("좋아요 처리시 실패했습니다.");
 			}
 		}); // --- ajax 끝
+	});
+	
+	// 글삭제(...클릭시 모달띄울때 postId심기)
+	$('.more-btn').on('click', function(e) {
+		
+		e.preventDefault(); //a태그 위로 올라감 방지
+		let postId = $(this).data('post-id');
+		
+		//한개인 코달 태그에(재활용) data-post-id 심어줌
+		$('#Modal').data("post-id", postId);
+	});
+	
+	// 모달안에 있는 삭제하기 클릭
+	$('#Modal #deletePostBtn').on('click', function(e) {
+		
+		e.preventDefault(); //a태그 위로 올라감 방지
+		
+		let postId = $('#Modal').data('post-id');
+		
+		$.ajax({
+			 type: "delete"
+		    , url: "/timeline/delete/" + postId		
+			, success: function(data) {
+				if (data.code == 1) {
+					alert("삭제성공")
+					location.reload(true);
+				} 
+			}
+			, error: function(reuqest, status, error) {
+				alert("게시글 삭제 처리시 실패했습니다.");
+			}
+		}); 
 	});
 });
 </script>
